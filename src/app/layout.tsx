@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Oxanium, Rajdhani } from "next/font/google";
+import { Oxanium, Rajdhani } from "next/font/google";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
 
 const oxanium = Oxanium({
   variable: "--font-oxanium",
@@ -29,7 +30,9 @@ export default function RootLayout({
       lang="en"
       className={`${oxanium.className} ${rajdhani.className} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground">{children}
+        <ToastContainer autoClose={2000} />
+      </body>
     </html>
   );
 }

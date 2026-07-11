@@ -9,6 +9,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - Tailwindcss
 - Embla-Carousel React
 - React Icons
+- React Toast
+- BetterAuth
 First, run the development server:
 
 ```bash
