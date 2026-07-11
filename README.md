@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+# Tech Stack
+- Next.js
+- Typescript
+- Heroui
+- Tailwindcss
+- Embla-Carousel React
 First, run the development server:
 
 ```bash
