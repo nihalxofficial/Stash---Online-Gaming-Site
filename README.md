@@ -11,6 +11,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - React Icons
 - React Toast
 - BetterAuth
+- MongoDb
+- Atlas
 First, run the development server:
 
 ```bash
