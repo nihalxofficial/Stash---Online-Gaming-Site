@@ -13,8 +13,10 @@ import {
 import stash from "@/assets/Stash.png";
 import { toast } from "react-toastify";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function LoginClient() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -27,25 +29,42 @@ export default function LoginClient() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Extracting all values cleanly via Object mapping methods
-    const formData = new FormData(e.currentTarget);
-    const userData = Object.fromEntries(formData.entries());
-
-    const { email, password } = userData as Record<string, string>;
-    const { data, error } = await authClient.signIn.email({
-      email,
-      password,
-      rememberMe: true,
-    });
-
-    console.log(data, error);
-
+    // 1. Immediately block interactions and set loading indicator state
     setIsLoading(true);
+
     try {
+      // Extracting all values cleanly via Object mapping methods
+      const formData = new FormData(e.currentTarget);
+      const userData = Object.fromEntries(formData.entries());
+      const { email, password } = userData as Record<string, string>;
+
+      // Artificial aesthetic buffer delay (Match your 1.5s matrix pace)
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success("Session Initialized. Access Granted.");
-    } catch (error) {
-      toast.error("Authentication handshake terminal failure.");
+
+      const { data, error } = await authClient.signIn.email({
+        email,
+        password,
+        rememberMe: true,
+      });
+
+      // 2. Intercept structured Better Auth API failures
+      if (error) {
+        toast.error(error.message || "Authentication handshake terminal failure.");
+        return;
+      }
+
+      // 3. Operational success routing protocol
+      if (data) {
+        toast.success("Session Initialized. Access Granted.");
+        router.push("/");
+      }
+    } catch (err: unknown) {
+      // 4. Fallback guard for hard network runtime crashes
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("An unexpected infrastructure exception occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -81,15 +100,15 @@ export default function LoginClient() {
           className="w-full bg-[#0d0f1a] flex flex-col md:flex-row min-h-[550px]"
           style={{ clipPath: cyberPolygon }}
         >
-          {/* LEFT PANEL: Integrated Artwork & Motivation Content */}
+          {/* LEFT PANEL: Integrated Artwork & Motivation Content (Enhanced visibility tuning) */}
           <div className="w-full md:w-1/2 relative flex items-center justify-center p-8 lg:p-12 overflow-hidden min-h-[320px] md:min-h-full">
             {/* Background Layer Asset */}
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-[10000ms] ease-out scale-110 group-hover/container:scale-105"
               style={{ backgroundImage: `url(${stash.src})` }}
             />
-            {/* Dark tech overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t md:bg-linear-to-r from-[#0d0f1a] via-[#0d0f1a]/95 to-[#0d0f1a]/40" />
+            {/* Balanced dark tech overlay opacity to let the image show properly */}
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#0d0f1a] via-[#0d0f1a]/75 to-[#0d0f1a]/20" />
 
             {/* Moving Scanner Line Visual Effect */}
             <div className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent top-0 animate-[bounce_5s_infinite] pointer-events-none" />
@@ -112,14 +131,14 @@ export default function LoginClient() {
                   Inventory Vault
                 </span>
               </h1>
-              <p className="text-[11px] font-mono text-gray-300 leading-relaxed tracking-wide">
+              <p className="text-[11px] font-mono text-gray-200 backdrop-blur-[2px] bg-black/10 p-2 rounded border border-white/5 leading-relaxed tracking-wide">
                 Welcome back to STASH. Access your secure node to manage
                 decentralized player assets, sync custom configurations, and
                 orchestrate live drops instantly.
               </p>
-              <div className="pt-2 border-t border-white/5 flex gap-4 text-[9px] font-mono text-gray-500 uppercase tracking-widest">
+              <div className="pt-2 border-t border-white/5 flex gap-4 text-[9px] font-mono text-gray-400 uppercase tracking-widest">
                 <div>
-                  Node: <span className="text-gray-400">Core_Alpha</span>
+                  Node: <span className="text-white">Core_Alpha</span>
                 </div>
                 <div>
                   Status:{" "}
@@ -232,7 +251,7 @@ export default function LoginClient() {
               </form>
 
               {/* Registration Anchor */}
-              <div className="text-center pt-4 border-t border-white/4">
+              <div className="text-center pt-4 border-t border-white/5">
                 <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
                   Not joined yet?{" "}
                   <Link
