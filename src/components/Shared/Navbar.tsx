@@ -89,7 +89,7 @@ export default function RepositoryNavbar() {
 
                 {/* Flat Text Login Button with Underline Fade */}
                 <Link 
-                  href="/login" 
+                  href="/auth/login" 
                   className="text-xs font-bold font-mono tracking-widest uppercase text-gray-300 hover:text-white transition-all duration-300 hidden sm:inline-flex relative py-1 group"
                 >
                   <span>Login</span>
@@ -98,7 +98,7 @@ export default function RepositoryNavbar() {
 
                 {/* Direct Cyber Link Element (3D Shimmer, Glow & Skew Pop Hover) */}
                 <Link
-                  href="/join"
+                  href="/auth/register"
                   className="inline-flex items-center justify-center bg-transparent border border-indigo-500/80 text-indigo-400 hover:text-white transition-all duration-300 text-[11px] font-bold font-mono tracking-widest px-4 md:px-5 h-9 min-w-0 relative overflow-hidden group/btn shadow-[0_0_15px_rgba(99,102,241,0)] hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]"
                   style={{ clipPath: "polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%)" }}
                 >
@@ -164,7 +164,7 @@ export default function RepositoryNavbar() {
           
           <div className="w-full px-12 pt-8 flex flex-col items-center gap-4 border-t border-gray-900/60">
             <Link 
-              href="/login" 
+              href="/auth/login" 
               onClick={() => setIsMobileMenuOpen(false)}
               className="text-sm font-bold font-mono tracking-widest uppercase text-gray-300 py-2 hover:text-white transition-colors"
             >
