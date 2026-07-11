@@ -8,6 +8,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - Heroui
 - Tailwindcss
 - Embla-Carousel React
+- React Icons
 First, run the development server:
 
 ```bash
