@@ -8,9 +8,11 @@ import {
   FiChevronDown, 
   FiUser, 
   FiSettings, 
-  FiLogOut, 
-  FiActivity 
+  FiLogOut 
 } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 // DYNAMIC MENU SCHEMATICS
 interface NavigationOption {
@@ -20,7 +22,8 @@ interface NavigationOption {
   accentClass: string;
 }
 
-const profileMenuOptions: NavigationOption[] = [
+// Turned into a dynamic array map generation function to handle conditional user roles safely
+const getProfileMenuOptions = (role: string = "user"): NavigationOption[] => [
   {
     label: "My Operator Profile",
     href: "/dashboard/profile",
@@ -28,22 +31,41 @@ const profileMenuOptions: NavigationOption[] = [
     accentClass: "group-hover:text-blue-400",
   },
   {
-    label: "Activity Logs",
-    href: "/dashboard/activity",
-    icon: FiActivity,
-    accentClass: "group-hover:text-indigo-400",
-  },
-  {
     label: "Configurations",
-    href: "/dashboard/settings",
+    href: `/dashboard/${role}/settings`,
     icon: FiSettings,
     accentClass: "group-hover:text-purple-400",
   },
 ];
 
-export default function DashboardNavbar() {
+interface UserProps {
+  user?: {
+    name?: string;
+    role?: string;
+  };
+}
+
+export default function DashboardNavbar({ user }: UserProps) {
+  const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+
+  // Dynamic assignment fallback parameters
+  const activeRole = user?.role || "user";
+  const displayName = user?.name || "User_Dev";
+  const menuOptions = getProfileMenuOptions(activeRole);
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+      setShowProfileMenu(false);
+      router.push("/");
+      toast.success("Killed current session authorization.");
+    } catch (error) {
+      // console.error("Signout sequence failure:", error);
+      toast.error("Failed to safely terminate session.");
+    }
+  };
 
   return (
     <header className="w-full h-16 bg-[#0d0f1a]/90 backdrop-blur-md border-b border-white/5 fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 font-mono select-none">
@@ -52,7 +74,7 @@ export default function DashboardNavbar() {
         {/* LEFT PROFILE: BRAND LOGO */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded bg-linear-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-8 h-8 rounded bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-200">
               <span className="text-white font-black text-sm tracking-tighter">NX</span>
             </div>
             <span className="hidden sm:block text-sm font-black text-white uppercase tracking-widest bg-clip-text group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-300">
@@ -129,11 +151,11 @@ export default function DashboardNavbar() {
               }}
               className={`flex cursor-pointer items-center gap-2 p-1.5 pl-2 rounded border bg-[#05060c] hover:border-white/10 transition-all ${showProfileMenu ? 'border-white/10' : 'border-white/5'}`}
             >
-              <div className="w-6 h-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center rounded text-[10px] font-black text-blue-400 tracking-tighter">
-                NU
+              <div className="w-6 h-6 bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center rounded text-[10px] font-black text-blue-400 tracking-tighter uppercase">
+                {displayName.slice(0, 2)}
               </div>
               <span className="hidden sm:block text-xs font-bold text-gray-300 tracking-wide max-w-[80px] truncate">
-                Nihal_Dev
+                {displayName}
               </span>
               <FiChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${showProfileMenu ? 'rotate-180 text-white' : ''}`} />
             </button>
@@ -144,11 +166,11 @@ export default function DashboardNavbar() {
                 
                 <div className="px-3 py-2 border-b border-white/5 mb-1">
                   <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Access Node</p>
-                  <p className="text-xs text-white font-black tracking-wide truncate">Nihal Uddin</p>
+                  <p className="text-xs text-white font-black tracking-wide truncate capitalize">{activeRole}</p>
                 </div>
 
                 {/* DYNAMIC MAP RUNNER */}
-                {profileMenuOptions.map((option) => {
+                {menuOptions.map((option) => {
                   const Icon = option.icon;
                   return (
                     <Link 
@@ -167,7 +189,7 @@ export default function DashboardNavbar() {
 
                 <button
                   type="button"
-                  onClick={() => console.log("Kill current session authorization.")}
+                  onClick={handleSignOut}
                   className="w-full cursor-pointer flex items-center gap-2.5 px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/5 rounded transition-colors group text-left"
                 >
                   <FiLogOut className="w-3.5 h-3.5 text-red-500/70 group-hover:text-red-400" />

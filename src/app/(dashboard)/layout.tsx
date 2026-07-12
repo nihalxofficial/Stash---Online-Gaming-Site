@@ -1,12 +1,14 @@
 import DashboardNavbar from "@/components/Shared/DashboardNavbar";
 import AdminSidebar from "@/components/Shared/AdminSidebar";
 import { LayoutProps } from "@/types";
+import { getUserSession } from "@/lib/core/session";
 
-const DashboardLayout = ({ children }: LayoutProps) => {
+const DashboardLayout = async({ children }: LayoutProps) => {
+  const user = await getUserSession();
   return (
     <div className="min-h-screen bg-[#05060c] text-white flex flex-col">
       {/* Top Header Row Panel */}
-      <DashboardNavbar />
+      <DashboardNavbar user={user} />
 
       {/* Main Workspace Frame split into Columns */}
       <div className="flex flex-1 pt-16">

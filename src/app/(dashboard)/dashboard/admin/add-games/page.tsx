@@ -1,6 +1,6 @@
 import React from "react";
 import { FiGrid } from "react-icons/fi";
-import AddGameForm from "@/components/Dashboard/AddGameForm";
+import AddGameForm from "./AddGameForm";
 
 export const metadata = {
   title: "Deploy Game Node | Admin Dashboard",

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLinkItem } from "@/types";
@@ -10,17 +10,17 @@ import { authClient } from "@/lib/auth-client";
 // Import icons from React Icons
 import { FiChevronDown, FiUser, FiSettings, FiLogOut, FiSearch, FiMenu, FiX } from "react-icons/fi";
 import { IoGridOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 const navLinks: NavLinkItem[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Tournament", href: "/tournament" },
-  { label: "Pages", href: "/pages" },
-  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
 export default function RepositoryNavbar() {
+  const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -51,7 +51,8 @@ export default function RepositoryNavbar() {
   const handleSignOut = async () => {
     await authClient.signOut();
     setIsDropdownOpen(false);
-    window.location.reload();
+    router.push("/");
+    toast.success("Killed current session authorization.");
   };
 
   return (

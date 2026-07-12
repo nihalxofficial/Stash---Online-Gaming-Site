@@ -1,8 +1,8 @@
 import { getRequiredRole } from "@/lib/core/session";
 import { LayoutProps } from "@/types";
 
-const AdminLayout = async({children}: LayoutProps) => {
-    await getRequiredRole("admin");
+const UserLayout = async({children}: LayoutProps) => {
+    await getRequiredRole("user");
     return (
         <div>
             {children}
@@ -10,4 +10,4 @@ const AdminLayout = async({children}: LayoutProps) => {
     );
 };
 
-export default AdminLayout;
+export default UserLayout;

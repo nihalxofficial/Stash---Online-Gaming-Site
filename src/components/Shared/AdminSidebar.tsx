@@ -26,25 +26,25 @@ interface SidebarLinkNode {
 const adminNavigationNodes: SidebarLinkNode[] = [
   {
     label: "Analytics",
-    href: "/dashboard",
+    href: "/dashboard/admin",
     icon: FiBarChart2,
     accentClass: "group-hover:text-blue-400",
   },
   {
     label: "Add Games",
-    href: "/dashboard/add-games",
+    href: "/dashboard/admin/add-games",
     icon: FiPlusCircle,
     accentClass: "group-hover:text-cyan-400",
   },
   {
     label: "My Games",
-    href: "/dashboard/my-games",
+    href: "/dashboard/admin/my-games",
     icon: FiGrid,
     accentClass: "group-hover:text-indigo-400",
   },
   {
     label: "All Streams",
-    href: "/dashboard/streams",
+    href: "/dashboard/admin/streams",
     icon: FiTv,
     accentClass: "group-hover:text-purple-400",
   },
@@ -56,7 +56,7 @@ const adminNavigationNodes: SidebarLinkNode[] = [
   },
   {
     label: "Settings",
-    href: "/dashboard/settings",
+    href: "/dashboard/admin/settings",
     icon: FiSettings,
     accentClass: "group-hover:text-purple-400",
   },
