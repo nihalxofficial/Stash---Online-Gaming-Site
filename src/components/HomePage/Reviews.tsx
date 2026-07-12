@@ -1,11 +1,9 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import Marquee from "react-fast-marquee";
 import { FiMessageSquare, FiStar } from "react-icons/fi";
 
-// IMPORT YOUR REVIEWS BACKGROUND IMAGE HERE
 import reviewsBg from "@/assets/reviews-bg.png";
 
 interface ReviewCardProps {
@@ -138,7 +136,7 @@ export default function Reviews() {
 
               {/* Review Description Prose */}
               <p className="text-xs text-gray-400 font-sans tracking-wide whitespace-normal leading-relaxed mb-4 min-h-[60px]">
-                "{review.comment}"
+                &quot;{review.comment}&quot;
               </p>
 
               {/* CARD FOOTER: Rating Performance Accent */}
