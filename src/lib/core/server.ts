@@ -5,7 +5,6 @@ import { getToken } from "./session";
 
 const Api = process.env.NEXT_PUBLIC_API_URL;
 
-// Helper to handle standardized Next.js responses securely
 const handleResponse = async (res: Response): Promise<unknown> => {
     if (res.status === 401) redirect("/auth/login");
     if (res.status === 403) redirect("/unauthorized");
@@ -39,14 +38,31 @@ export const serverMutation = async (
 ): Promise<unknown> => {
     const token = await getToken();
 
+    // 1. Detect if the incoming payload is a FormData stream or standard object
+    const isFormData = data instanceof FormData;
+
+    // 2. Build headers dynamically
+    const headers: Record<string, string> = {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    // CRITICAL: When transmitting FormData, do NOT set "Content-Type".
+    // The fetch API will automatically set it to 'multipart/form-data' 
+    // and append the correct boundary hash string.
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    // 3. Prepare body payload safely
+    const bodyPayload = isFormData 
+        ? (data as FormData) 
+        : (data ? JSON.stringify(data) : undefined);
+
     try {
         const res = await fetch(`${Api}${path}`, {
             method: method,
-            headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: data ? JSON.stringify(data) : undefined,
+            headers: headers,
+            body: bodyPayload,
         });
 
         return handleResponse(res);

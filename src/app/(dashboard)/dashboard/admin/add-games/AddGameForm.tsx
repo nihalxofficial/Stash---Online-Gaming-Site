@@ -32,8 +32,13 @@ import { DateValue } from "@internationalized/date";
 import { uploadToImgBB } from "@/lib/upload";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { addGame } from "@/lib/action/games";
 
-export default function AddGameForm() {
+interface AddGameFormProps {
+  userId: string;
+}
+
+export default function AddGameForm({ userId }: AddGameFormProps) {
   const [isUploading, setIsUploading] = useState(false);
   
   // File state managers
@@ -84,7 +89,6 @@ export default function AddGameForm() {
     }
 
     setIsUploading(true);
-    const pipelineToastId = toast.loading("Processing asset compression and pipelines...");
 
     try {
       const formElement = e.currentTarget;
@@ -100,7 +104,6 @@ export default function AddGameForm() {
       }
 
       // 2. Format inputs cleanly into Mongoose-schema matching properties
-      // Note: We cast them to Numbers here for clean local schema verification.
       const titleValue = formData.get("title") as string;
       const genresArray = (formData.get("genre") as string).split(",").map(i => i.trim()).filter(Boolean);
       const platformsArray = (formData.get("platform") as string).split(",").map(i => i.trim()).filter(Boolean);
@@ -113,16 +116,15 @@ export default function AddGameForm() {
         images: galleryUrls,
         description: formData.get("description") as string,
         genre: genresArray,
-        rating: Number(formData.get("rating") || 0), // Local strict verification (number)
+        rating: Number(formData.get("rating") || 0),
         releaseDate: releaseDate.toString(),
         platform: platformsArray,
         status: (formData.get("status") as string) || "Live",
-        price: Number(formData.get("price") || 0),   // Local strict verification (number)
+        price: Number(formData.get("price") || 0),
         size: calculatedSize
       };
 
       // 3. Construct clean FormData payload matching the Express controller
-      
       const backendPayload = new FormData();
       backendPayload.append("file", gameBinaryFile);
       backendPayload.append("title", formPayloadObject.title);
@@ -132,10 +134,8 @@ export default function AddGameForm() {
       backendPayload.append("status", formPayloadObject.status);
       backendPayload.append("size", formPayloadObject.size);
       backendPayload.append("thumbnail", formPayloadObject.thumbnail);
+      backendPayload.append("owner", userId);
 
-      // NOTE: FormData payloads strictly transmit keys and values as strings or Blobs/Files.
-      // We append rating and price here as strings. On your Express backend parser,
-      // remember to run them back through `Number()` right before executing your db schema save.
       backendPayload.append("rating", String(formPayloadObject.rating));
       backendPayload.append("price", String(formPayloadObject.price));
       
@@ -143,51 +143,11 @@ export default function AddGameForm() {
       formPayloadObject.platform.forEach(p => backendPayload.append("platform", p));
       formPayloadObject.images.forEach(img => backendPayload.append("images", img));
 
-      // 4. Clean & Organized Console Inspection Matrix
-      console.log("=== VERIFYING BACKEND PAYLOAD STRUCTURE ===");
-      const consolePreview: Record<string, any> = {};
-      backendPayload.forEach((value, key) => {
-        if (consolePreview[key]) {
-          if (!Array.isArray(consolePreview[key])) {
-            consolePreview[key] = [consolePreview[key]];
-          }
-          consolePreview[key].push(value instanceof File ? value.name : value);
-        } else {
-          consolePreview[key] = value instanceof File ? value.name : value;
-        }
-      });
-      console.log(consolePreview);
-
-      // ==========================================
-      // TODO: FUTURE API MUTATION PLACEHOLDER
-      // This section handles sending the network POST request out to the API Node endpoint.
-      // Un-comment and update this block once you wire up your server-side database mutation!
-      // ==========================================
-      
-      /*
-      const response = await fetch("/api/games/create", {
-        method: "POST",
-        body: backendPayload
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server ingestion error: ${response.statusText}`);
+      const result = await addGame(backendPayload);
+      if(result.success==="false"){
+        toast.error("Game deployment node built failed!");
       }
-
-      const backendResult = await response.json();
-      console.log("=== SERVER SUBMISSION COMPLETE ===", backendResult);
-      */
-
-      // Mocking a successful response for now until mutation logic is activated
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("=== API MUTATION SKIPPED (OFFLINE PREVIEW) ===", formPayloadObject);
-
-      toast.update(pipelineToastId, { 
-        render: "Game deployment node built successfully!", 
-        type: "success", 
-        isLoading: false, 
-        autoClose: 2000 
-      });
+      toast.success("Game deployment node built successfully!");
       
       // Reset State Controls
       formElement.reset();
@@ -197,12 +157,9 @@ export default function AddGameForm() {
       setReleaseDate(null);
     } catch (error: any) {
       console.error("Asset pipeline failure:", error);
-      toast.update(pipelineToastId, { 
-        render: `Ingestion Pipeline Failure: ${error.message || error}`, 
-        type: "error", 
-        isLoading: false, 
-        autoClose: 5000 
-      });
+      
+      // 5. Fire clean, transient error toast
+      toast.error(`Ingestion Pipeline Failure: ${error.message || error}`);
     } finally {
       setIsUploading(false);
     }

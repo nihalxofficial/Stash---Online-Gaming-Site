@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   images: {
     remotePatterns: [
@@ -10,6 +9,12 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
+  },
+  // Add this configuration to fix your ERR_CONNECTION_RESET file upload limits
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "500mb", // Change this size to match the largest game file you plan to support
+    },
   },
 };
 

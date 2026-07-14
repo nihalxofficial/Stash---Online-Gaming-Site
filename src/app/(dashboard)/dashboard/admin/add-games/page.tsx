@@ -1,13 +1,15 @@
 import React from "react";
 import { FiGrid } from "react-icons/fi";
 import AddGameForm from "./AddGameForm";
+import { getUserSession } from "@/lib/core/session";
 
 export const metadata = {
   title: "Deploy Game Node | Admin Dashboard",
   description: "Initialize and configure arena games matrix system",
 };
 
-export default function AddGamePage() {
+export default async function AddGamePage() {
+  const user = await getUserSession();
   return (
     <div className="w-full max-w-4xl mx-auto font-mono select-none pb-12">
       
@@ -23,7 +25,7 @@ export default function AddGamePage() {
       </div>
 
       {/* CORE INTERACTIVE MATRIX CONTROLLER */}
-      <AddGameForm />
+      <AddGameForm userId={user.id} />
 
     </div>
   );
