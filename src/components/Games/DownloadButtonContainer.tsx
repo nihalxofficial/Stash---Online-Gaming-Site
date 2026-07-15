@@ -1,38 +1,52 @@
 // src/components/Games/DownloadButtonContainer.tsx
 "use client";
 
-import React, { useState } from 'react';
-import { FiDownload, FiCreditCard, FiCheckCircle, FiShield } from 'react-icons/fi';
+import React, { useState } from "react";
+import {
+  FiDownload,
+  FiCreditCard,
+  FiCheckCircle,
+  FiShield,
+} from "react-icons/fi";
 import { Button, Modal } from "@heroui/react";
+import { downloadGame } from "@/lib/api/games";
 
 interface DownloadButtonContainerProps {
   gameId: string;
   price: number;
   gameTitle: string;
-  variant?: 'card' | 'details';
+  variant?: "card" | "details";
 }
 
-export default function DownloadButtonContainer({ gameId, price, gameTitle, variant = 'details' }: DownloadButtonContainerProps) {
-  const [step, setStep] = useState<'checkout' | 'success'>('checkout');
+export default function DownloadButtonContainer({
+  gameId,
+  price,
+  gameTitle,
+  variant = "details",
+}: DownloadButtonContainerProps) {
+  const [step, setStep] = useState<"checkout" | "success">("checkout");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const isFree = price === 0;
-  const isCard = variant === 'card';
+  const isCard = variant === "card";
 
   const triggerDownloadAction = () => {
-    window.open(`/api/games/${gameId}/download`, '_blank');
+    window.open(
+      `${process.env.NEXT_PUBLIC_API_URL}/games/${gameId}/download`,
+      "_blank",
+    );
   };
 
   const simulatePaymentProcess = () => {
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
-      setStep('success');
+      setStep("success");
     }, 1500);
   };
 
   const resetModalFlow = () => {
-    setStep('checkout');
+    setStep("checkout");
   };
 
   // Button layout matching your card cuts perfectly
@@ -42,9 +56,9 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
 
   if (isFree) {
     return (
-      <button 
-        onClick={triggerDownloadAction} 
-        className={triggerButtonStyle} 
+      <button
+        onClick={triggerDownloadAction}
+        className={triggerButtonStyle}
         type="button"
       >
         <FiDownload className="w-3 h-3 stroke-[3]" />
@@ -67,11 +81,13 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
         <Modal.Container className="w-full h-full overflow-y-auto flex justify-center items-start pt-24 pb-12 px-4">
           {/* FIXED: mx-auto locks it to horizontal grid center, mt-6 ensures a clean top offset from navbars */}
           <Modal.Dialog className="w-full sm:max-w-[440px] mx-auto mt-6 bg-[#0d0f1a] border border-white/10 text-gray-200 font-mono rounded-2xl p-8 md:p-10 shadow-2xl relative overflow-hidden focus:outline-none">
-            
-            <Modal.CloseTrigger onClick={resetModalFlow} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors cursor-pointer" />
-            
+            <Modal.CloseTrigger
+              onClick={resetModalFlow}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors cursor-pointer"
+            />
+
             {/* STEP A: SECURE ACCESS TERMINAL */}
-            {step === 'checkout' && (
+            {step === "checkout" && (
               <div className="space-y-6 w-full">
                 <Modal.Header className="flex flex-col gap-2 items-start p-0">
                   <div className="p-3 bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-indigo-500/20 text-indigo-400 rounded-xl shadow-inner">
@@ -89,20 +105,25 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
 
                 <Modal.Body className="p-0 space-y-4">
                   <div className="p-4 bg-[#06070c] border border-white/5 rounded-xl flex items-center justify-between text-xs shadow-md">
-                    <span className="text-gray-500 tracking-wider">Access Token Weight:</span>
+                    <span className="text-gray-500 tracking-wider">
+                      Access Token Weight:
+                    </span>
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-black text-base">
                       ${price.toFixed(2)}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-start gap-3 text-[11px] text-gray-400 leading-relaxed bg-white/[0.02] border border-white/[0.04] p-3.5 rounded-xl shadow-inner">
                     <FiShield className="text-cyan-400 w-4 h-4 shrink-0 mt-0.5" />
-                    <span>Sandbox interface routing active. Authorization clearance protocols bypass production networks.</span>
+                    <span>
+                      Sandbox interface routing active. Authorization clearance
+                      protocols bypass production networks.
+                    </span>
                   </div>
                 </Modal.Body>
 
                 <Modal.Footer className="p-0 pt-2">
-                  <Button 
+                  <Button
                     isLoading={isProcessing}
                     onClick={simulatePaymentProcess}
                     className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-widest rounded-xl py-6 shadow-lg shadow-indigo-600/20 active:scale-[0.99]"
@@ -114,14 +135,16 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
             )}
 
             {/* STEP B: CLEARANCE SUCCESS HUB */}
-            {step === 'success' && (
+            {step === "success" && (
               <div className="space-y-6 text-center w-full">
                 <Modal.Header className="flex flex-col gap-3 items-center p-0">
                   <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/5">
                     <FiCheckCircle className="w-8 h-8" />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[9px] text-emerald-400 font-black tracking-widest block uppercase">Transaction Confirmed</span>
+                    <span className="text-[9px] text-emerald-400 font-black tracking-widest block uppercase">
+                      Transaction Confirmed
+                    </span>
                     <Modal.Heading className="text-lg font-black text-white uppercase tracking-wide">
                       Access Key Cleared
                     </Modal.Heading>
@@ -130,19 +153,21 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
 
                 <Modal.Body className="p-0">
                   <p className="text-xs text-gray-400 leading-relaxed px-1">
-                    Verification matrix check successful. The direct system execution download link token is fully bound to your client profile context.
+                    Verification matrix check successful. The direct system
+                    execution download link token is fully bound to your client
+                    profile context.
                   </p>
                 </Modal.Body>
 
                 <Modal.Footer className="p-0 pt-2 flex gap-3">
-                  <Button 
+                  <Button
                     slot="close"
                     onClick={resetModalFlow}
                     className="flex-1 bg-white/5 hover:bg-white/10 border border-white/5 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-xl py-6 transition-all"
                   >
                     Dismiss
                   </Button>
-                  <Button 
+                  <Button
                     slot="close"
                     onClick={() => {
                       triggerDownloadAction();
@@ -156,7 +181,6 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
                 </Modal.Footer>
               </div>
             )}
-
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>

@@ -42,12 +42,12 @@ const adminNavigationNodes: SidebarLinkNode[] = [
     icon: FiGrid,
     accentClass: "group-hover:text-indigo-400",
   },
-  {
-    label: "All Streams",
-    href: "/dashboard/admin/streams",
-    icon: FiTv,
-    accentClass: "group-hover:text-purple-400",
-  },
+  // {
+  //   label: "All Streams",
+  //   href: "/dashboard/admin/streams",
+  //   icon: FiTv,
+  //   accentClass: "group-hover:text-purple-400",
+  // },
   {
     label: "Profile",
     href: "/dashboard/profile",

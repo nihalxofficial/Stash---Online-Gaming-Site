@@ -71,7 +71,7 @@ export default function DashboardNavbar({ user }: UserProps) {
         
         {/* LEFT PROFILE: BRAND LOGO & TYPOGRAPHY */}
         <div className="flex items-center gap-8 shrink-0">
-          <Link href="/dashboard" className="flex items-center group no-underline">
+          <Link href="/" className="flex items-center group no-underline">
             <span className="text-lg font-black text-white font-mono tracking-widest transition-transform duration-300 inline-block group-hover:-translate-y-[1px]">
               ST
             </span>
@@ -178,7 +178,7 @@ export default function DashboardNavbar({ user }: UserProps) {
                   );
                 })}
 
-                <div className="h-[1px] bg-white/5 my-1" />
+                <div className="h-px bg-white/5 my-1" />
 
                 <button
                   type="button"
