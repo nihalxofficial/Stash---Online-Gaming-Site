@@ -1,5 +1,4 @@
 // src/app/games/page.tsx
-import React from "react";
 import { getGames } from "@/lib/api/games";
 import { FiActivity } from "react-icons/fi";
 import GamesClientWrapper from "./GamesClientWrapper";
@@ -9,15 +8,25 @@ export const metadata = {
   description: "Browse and filter the complete games catalog.",
 };
 
-export default async function GamesPage() {
-  // Fetch game data array securely on the server side
-  const games = await getGames();
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function GamesPage({ searchParams }: PageProps) {
+  // Await the query values inside the Server Component runtime
+  const resolvedParams = await searchParams;
+  
+  // Forward parameters directly onto the backend call pipeline
+  const games = await getGames(resolvedParams);
+
+  // Fallback static genre index array for the selector dropdown filter
+  const allGenres = ["Fps", "Tactical", "Hero Shooter", "Action", "RPG", "Sci-Fi", "Open World", "Roguelike"];
 
   return (
     <div className="min-h-screen bg-[#08090f] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-950/10 via-[#08090f] to-[#08090f] text-gray-200 p-4 md:p-8 font-mono">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* HEADER LOG - Server Rendered Static Frame */}
+        {/* HEADER LOG - Server Rendered */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-cyan-400 text-xs uppercase tracking-widest animate-pulse">
@@ -32,8 +41,8 @@ export default async function GamesPage() {
           </div>
         </div>
 
-        {/* Client side data handling matrix */}
-        <GamesClientWrapper initialGames={games || []} />
+        {/* Client Side Controller Wrapper */}
+        <GamesClientWrapper games={games || []} allGenres={allGenres} />
 
       </div>
     </div>

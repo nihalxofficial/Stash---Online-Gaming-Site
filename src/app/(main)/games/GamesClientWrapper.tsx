@@ -2,93 +2,69 @@
 "use client";
 
 import GameCard from "@/components/Shared/GameCard";
-import GameCardSkeleton from "@/components/Shared/GameCardSkeleton";
 import { GameData } from "@/types";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FiSearch, FiSliders, FiGrid } from "react-icons/fi";
+import GameCardSkeleton from "@/components/Shared/GameCardSkeleton";
 
 interface GamesClientWrapperProps {
-  initialGames: GameData[];
+  games: GameData[];
+  allGenres: string[];
 }
 
-export default function GamesClientWrapper({ initialGames }: GamesClientWrapperProps) {
-  // --- CONTROL STATES ---
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("All");
-  const [sortBy, setSortBy] = useState("default");
-  
-  // Pipeline loading buffer state for client side UI changes
-  const [isPending, setIsPending] = useState(true);
+export default function GamesClientWrapper({ games, allGenres }: GamesClientWrapperProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
-  // Turn off initial mount loading frame once components resolve in client layout
-  useEffect(() => {
-    setIsPending(false);
-  }, []);
+  // Read current parameters straight from the browser context location
+  const currentSearch = searchParams.get("q") || "";
+  const currentGenre = searchParams.get("genre") || "All";
+  const currentSort = searchParams.get("sortBy") || "default";
 
-  // Dynamically extract all unique genres from live data records
-  const allGenres = useMemo(() => {
-    return Array.from(new Set(initialGames.flatMap((game) => game.genre || [])));
-  }, [initialGames]);
-
-  // --- COMPREHENSIVE FILTER & SORT LOGIC ENGINE ---
-  const filteredAndSortedGames = useMemo(() => {
-    let result = [...initialGames];
-
-    // 1. Text Search Filter (Title / Description match checks)
-    if (searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase().trim();
-      result = result.filter(
-        (game) =>
-          game.title?.toLowerCase().includes(query) ||
-          game.description?.toLowerCase().includes(query)
-      );
+  // URL State Mutator Engine
+  const updateParams = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (value && value !== "All" && value !== "default") {
+      params.set(key, value);
+    } else {
+      params.delete(key);
     }
 
-    // 2. Genre Category Filter
-    if (selectedGenre !== "All") {
-      result = result.filter((game) => game.genre?.includes(selectedGenre));
-    }
-
-    // 3. Sorting Engine Application
-    if (sortBy === "price-low") {
-      result.sort((a, b) => (a.price || 0) - (b.price || 0));
-    } else if (sortBy === "price-high") {
-      result.sort((a, b) => (b.price || 0) - (a.price || 0));
-    } else if (sortBy === "rating") {
-      result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else if (sortBy === "title") {
-      result.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-    }
-
-    return result;
-  }, [initialGames, searchQuery, selectedGenre, sortBy]);
+    // Trigger router transition so Server Page re-executes seamlessly inside Suspense context
+    startTransition(() => {
+      router.push(`/games?${params.toString()}`);
+    });
+  };
 
   return (
     <div className="space-y-8">
       {/* CONTROLS INTERACTIVE PANEL */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-[#0d0f1a]/60 border border-white/5 p-4 rounded-xl backdrop-blur-md shadow-xl">
         
-        {/* Search Input field */}
+        {/* Real-time Text Query Input */}
         <div className="relative md:col-span-5">
           <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
           <input
             type="text"
             placeholder="Search by protocol title..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={currentSearch}
+            onChange={(e) => updateParams("q", e.target.value)}
             className="w-full h-10 pl-10 pr-4 bg-[#06070c] border border-white/5 rounded text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500/50 transition-colors"
           />
         </div>
 
-        {/* Genre Selector */}
+        {/* Category Filter Selector */}
         <div className="relative md:col-span-4 flex items-center gap-2">
           <FiSliders className="text-gray-500 w-4 h-4 shrink-0 hidden sm:block" />
           <select
-            value={selectedGenre}
-            onChange={(e) => setSelectedGenre(e.target.value)}
+            value={currentGenre}
+            onChange={(e) => updateParams("genre", e.target.value)}
             className="w-full h-10 px-3 bg-[#06070c] border border-white/5 rounded text-xs text-gray-300 focus:outline-none focus:border-indigo-500/50 cursor-pointer transition-colors"
           >
-            <option value="All">All Genres (Global Filter)</option>
+            <option value="All">All Genres</option>
             {allGenres.map((genre) => (
               <option key={genre} value={genre}>
                 {genre}
@@ -97,12 +73,12 @@ export default function GamesClientWrapper({ initialGames }: GamesClientWrapperP
           </select>
         </div>
 
-        {/* Sort Vector Selector */}
+        {/* Database Sort Engine Selector */}
         <div className="relative md:col-span-3 flex items-center gap-2">
           <FiGrid className="text-gray-500 w-4 h-4 shrink-0 hidden sm:block" />
           <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            value={currentSort}
+            onChange={(e) => updateParams("sortBy", e.target.value)}
             className="w-full h-10 px-3 bg-[#06070c] border border-white/5 rounded text-xs text-gray-300 focus:outline-none focus:border-indigo-500/50 cursor-pointer transition-colors"
           >
             <option value="default">Sort Vector: Default</option>
@@ -115,31 +91,28 @@ export default function GamesClientWrapper({ initialGames }: GamesClientWrapperP
 
       </div>
 
-      {/* 4-COLUMN RESPONSIVE RENDER GRID */}
+      {/* RENDER SYSTEM DISPLAY MATRIX */}
       {isPending ? (
-        /* SKELETON MATRIX ACTIVE ON HYDRATION STAGE */
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, idx) => (
             <GameCardSkeleton key={`skeleton-${idx}`} />
           ))}
         </div>
-      ) : filteredAndSortedGames.length > 0 ? (
-        /* LIVE RECOGNIZED GAME CARD GRID DATA DISPLAY */
+      ) : games.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredAndSortedGames.map((game) => (
+          {games.map((game) => (
             <div key={game.id || game.slug} className="h-full animate-[fadeIn_0.2s_ease-out]">
               <GameCard game={game} />
             </div>
           ))}
         </div>
       ) : (
-        /* EMPTY RECORD STATE BOX */
         <div className="w-full border border-dashed border-white/5 rounded-2xl py-20 flex flex-col items-center justify-center text-center space-y-2">
           <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">
             No Records Retrieved
           </p>
           <p className="text-xs text-gray-600 font-mono max-w-xs">
-            Your live matrix queries yielded no data structures. Try resetting search parameters.
+            Your live matrix queries yielded no data structures on the server cache. Try resetting parameters.
           </p>
         </div>
       )}
