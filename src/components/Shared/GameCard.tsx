@@ -105,7 +105,7 @@ export default function GameCard({ game }: GameCardProps) {
 
         {/* Outlined Details Button */}
         <Link 
-          href={`/tournament/${game.slug}`}
+          href={`/games/${game._id}`}
           className="flex items-center justify-center gap-1 bg-[#121420]/60 hover:bg-[#121420] border border-white/5 text-gray-300 hover:text-white text-[10px] font-bold tracking-widest uppercase py-2 rounded transition-all duration-200 no-underline [clip-path:polygon(6px_0,100%_0,100%_100%,0_100%,0_6px)]"
         >
           <FiEye className="w-3 h-3" />
