@@ -36,3 +36,19 @@ export interface AboutSectionProps {
     label: string;
   }[];
 }
+
+
+export interface GameData {
+  id: string;
+  title: string;
+  slug: string;
+  thumbnail: string;
+  description: string;
+  genre: string[];
+  rating: number;
+  releaseDate: string;
+  platform: string[];
+  status: string;
+  price: number;
+  size: string;
+}

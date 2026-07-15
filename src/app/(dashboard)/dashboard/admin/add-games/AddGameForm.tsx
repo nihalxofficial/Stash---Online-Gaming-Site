@@ -30,7 +30,7 @@ import {
 } from "react-icons/fi";
 import { DateValue } from "@internationalized/date";
 import { uploadToImgBB } from "@/lib/upload";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { addGame } from "@/lib/action/games";
 
@@ -143,11 +143,13 @@ export default function AddGameForm({ userId }: AddGameFormProps) {
       formPayloadObject.platform.forEach(p => backendPayload.append("platform", p));
       formPayloadObject.images.forEach(img => backendPayload.append("images", img));
 
-      const result = await addGame(backendPayload);
+      const result : any = await addGame(backendPayload);
       if(result.success==="false"){
-        toast.error("Game deployment node built failed!");
+        toast.error("Game deployment failed!");
       }
-      toast.success("Game deployment node built successfully!");
+      if(result.title){
+        toast.success("Game deployment successful!");
+      }
       
       // Reset State Controls
       formElement.reset();
@@ -168,7 +170,6 @@ export default function AddGameForm({ userId }: AddGameFormProps) {
   return (
     <>
       {/* Toast Notification Mount Target */}
-      <ToastContainer theme="dark" position="top-right" />
 
       <Form onSubmit={handleAddGameSubmit} className="space-y-6 w-full text-gray-200">
         
