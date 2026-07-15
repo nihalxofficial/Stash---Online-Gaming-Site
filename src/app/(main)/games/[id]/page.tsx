@@ -1,4 +1,3 @@
-// src/app/(main)/games/[id]/page.tsx
 import { getGameById } from "@/lib/api/games";
 import Link from "next/link";
 import {
@@ -62,16 +61,33 @@ export default async function GameDetailsPage({ params }: PageProps) {
 
   const ownerName: string = game?.owner?.name || "System Core Operator";
   const ownerEmail: string = game?.owner?.email || "internal@system.node";
-
-  const targetId =
-    game?.id ||
-    (typeof game?._id === "string" ? game._id : game?._id?.$oid) ||
-    id;
+  
+  // EXACT ID LOOKUP COPIED FROM GAMECARD.tsx
+  const targetId = game?._id || id;
 
   const mediaGallery: string[] = [
     ...(game?.thumbnail ? [game.thumbnail] : []),
     ...(game?.images || []),
   ];
+
+  // DETERMINISTIC SEED MATRIX BASED ON TARGET ID STRING (SAME AS RANDOM CARD MOCK LOGIC)
+  const displaySize = (() => {
+    const idString = typeof targetId === "string" 
+      ? targetId 
+      : targetId && typeof targetId === "object" && "$oid" in targetId 
+        ? (targetId as any).$oid 
+        : String(targetId || id);
+
+    let hash = 0;
+    for (let i = 0; i < idString.length; i++) {
+      hash = idString.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    const min = 10;
+    const max = 100;
+    const sizeVal = min + (Math.abs(hash) % (max - min + 1));
+    return `${sizeVal} GB`;
+  })();
 
   return (
     <div className="min-h-screen bg-[#08090f] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-950/10 via-[#08090f] to-[#08090f] text-gray-200 p-4 md:p-8 font-mono">
@@ -122,7 +138,6 @@ export default async function GameDetailsPage({ params }: PageProps) {
                 </p>
               </div>
 
-              {/* FIXED: DYNAMIC DOWNLOAD COMPONENT INSTALLED */}
               <div className="flex-1 max-w-[200px]">
                 <DownloadButtonContainer
                   gameId={targetId}
@@ -149,7 +164,7 @@ export default async function GameDetailsPage({ params }: PageProps) {
                   <FiHardDrive className="text-cyan-400" /> Package Size
                 </div>
                 <p className="text-white font-bold">
-                  {game?.size || "Unknown Space"}
+                  {displaySize}
                 </p>
               </div>
 
@@ -181,7 +196,6 @@ export default async function GameDetailsPage({ params }: PageProps) {
                 <FiUser className="text-cyan-400" /> Operations Owner Manifest
               </div>
               <div className="flex items-center gap-3 bg-[#06070c] p-3 border border-white/5 rounded-xl">
-                {/* OWNER AVATAR IMAGE CONTAINER */}
                 <div className="relative w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center overflow-hidden shrink-0">
                   {game?.owner?.image ? (
                     <Image
@@ -222,7 +236,6 @@ export default async function GameDetailsPage({ params }: PageProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-white/5 pt-4">
-            {/* GENRES TAG GROUP */}
             <div className="space-y-2">
               <p className="text-[10px] uppercase text-gray-500 tracking-wider flex items-center gap-1">
                 <FiLayers className="w-3 h-3" /> Core Genres
@@ -239,7 +252,6 @@ export default async function GameDetailsPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* PLATFORMS TAG GROUP */}
             <div className="space-y-2">
               <p className="text-[10px] uppercase text-gray-500 tracking-wider flex items-center gap-1">
                 <FiCpu className="w-3 h-3" /> Platform Deployments

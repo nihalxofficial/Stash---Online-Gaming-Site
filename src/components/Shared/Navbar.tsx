@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 const navLinks: NavLinkItem[] = [
   { label: "Home", href: "/" },
   { label: "Games", href: "/games" },
-  { label: "About Us", href: "/about" },
+  { label: "About Us", href: "/about-us" },
   // { label: "Tournament", href: "/tournament" },
   { label: "Contact", href: "/contact" },
 ];

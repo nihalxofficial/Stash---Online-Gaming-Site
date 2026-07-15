@@ -1,4 +1,3 @@
-// src/components/Games/GameCard.tsx
 "use client";
 
 import React, { useMemo } from "react";
@@ -51,7 +50,12 @@ export default function GameCard({ game }: GameCardProps) {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f1a] via-transparent to-black/40 pointer-events-none" />
 
-        {/* Rating Overlay */}
+        {/* Top Left: Platform Overlay */}
+        <div className="absolute top-2 left-2 z-10 bg-black/75 backdrop-blur-sm border border-white/10 px-1.5 py-0.5 rounded text-cyan-400 text-[10px] font-bold shadow-md uppercase tracking-wider max-w-[120px] truncate">
+          {game?.platform?.[0] || "PC"}
+        </div>
+
+        {/* Top Right: Rating Overlay */}
         <div className="absolute top-2 right-2 z-10 flex items-center gap-0.5 bg-black/75 backdrop-blur-sm border border-white/10 px-1.5 py-0.5 rounded text-amber-400 text-[10px] font-bold shadow-md">
           <FiStar className="fill-amber-400 w-2.5 h-2.5" />
           <span>{game?.rating ? game.rating.toFixed(1) : "0.0"}</span>
@@ -69,9 +73,9 @@ export default function GameCard({ game }: GameCardProps) {
             "An immersive gaming experience. Explore expansive worlds and master the gameplay mechanics in this unique title."}
         </p>
 
-        {/* FIXED: PRICE IS SHIFTED HERE (GENRE ROW) */}
+        {/* META ROW: SHOWING GENRE & PRICE */}
         <div className="w-full flex items-center justify-between border-t border-white/[0.04] pt-2 text-[10px] text-gray-400 font-mono">
-          <span className="truncate max-w-[35%] text-gray-300 text-left">
+          <span className="truncate max-w-[35%] text-indigo-400 text-left uppercase font-bold tracking-tight">
             {game?.genre?.[0] || "General"}
           </span>
 
@@ -92,10 +96,10 @@ export default function GameCard({ game }: GameCardProps) {
 
       {/* 3. FOOTER: DETAILS BUTTON (LEFT) | DOWNLOAD BUTTON (RIGHT) */}
       <div className="mt-auto grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.04] z-30 relative">
-        {/* View Details Outlined Trigger */}
+        {/* View Details Outlined Trigger - FIXED: Slices Top Right Corner Now */}
         <Link
           href={`/games/${targetId}`}
-          className="flex items-center justify-center gap-1 bg-[#121420]/60 hover:bg-[#121420] border border-white/5 text-gray-300 hover:text-white text-[10px] font-bold tracking-widest uppercase py-2 rounded transition-all duration-200 no-underline [clip-path:polygon(6px_0,100%_0,100%_100%,0_100%,0_6px)]"
+          className="flex items-center justify-center gap-1 bg-[#121420]/60 hover:bg-[#121420] border border-white/5 text-gray-300 hover:text-white text-[10px] font-bold tracking-widest uppercase py-2 rounded transition-all duration-200 no-underline [clip-path:polygon(0_0,calc(100%-6px)_0,100%_6px,100%_100%,0_100%)]"
         >
           <FiEye className="w-3 h-3" />
           <span>Details</span>
