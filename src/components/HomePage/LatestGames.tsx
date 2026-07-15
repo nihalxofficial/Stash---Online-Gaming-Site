@@ -1,96 +1,17 @@
 "use client";
 
-import React from "react";
-import GameCard, { GameData } from "../Shared/GameCard";
+import GameCard from "../Shared/GameCard";
+import { GameData } from "@/types";
 
-const demoGames: GameData[] = [
-  {
-    id: "g_01",
-    title: "Valorant",
-    slug: "valorant",
-    thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600",
-    description: "A 5v5 character-based tactical shooter where precise gunplay meets unique agent abilities. Engineered for high-stakes competitive play.",
-    genre: ["FPS", "Tactical"],
-    rating: 4.5,
-    releaseDate: "2020-06",
-    platform: ["PC", "PS5", "Xbox"],
-    status: "Live",
-    price: 0,
-    size: "45 GB",
-  },
-  {
-    id: "g_02",
-    title: "Cyberpunk 2077",
-    slug: "cyberpunk-2077",
-    thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600",
-    description: "An open-world action-adventure RPG set in Night City, a megalopolis obsessed with power, glamour, and body modification.",
-    genre: ["RPG", "Open World"],
-    rating: 4.7,
-    releaseDate: "2020-12",
-    platform: ["PC", "PS5", "Xbox"],
-    status: "Live",
-    price: 59.99,
-    size: "70 GB",
-  },
-  {
-    id: "g_03",
-    title: "Helldivers 2",
-    slug: "helldivers-2",
-    thumbnail: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=600",
-    description: "Join the Helldivers and fight for freedom across a hostile galaxy in fast, frantic, and ferocious third-person cooperative team shooters.",
-    genre: ["Action", "Co-op"],
-    rating: 4.6,
-    releaseDate: "2024-02",
-    platform: ["PC", "PS5"],
-    status: "Live",
-    price: 39.99,
-    size: "100 GB",
-  },
-  {
-    id: "g_04",
-    title: "Counter-Strike 2",
-    slug: "counter-strike-2",
-    thumbnail: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=600",
-    description: "The next chapter of the world's premier tactical competitive gaming experience, built on the advanced Source 2 engine.",
-    genre: ["FPS", "Competitive"],
-    rating: 4.3,
-    releaseDate: "2023-09",
-    platform: ["PC"],
-    status: "Live",
-    price: 0,
-    size: "85 GB",
-  },
-  {
-    id: "g_05",
-    title: "Elden Ring",
-    slug: "elden-ring",
-    thumbnail: "https://images.unsplash.com/photo-1553481187-be93c21490a9?auto=format&fit=crop&q=80&w=600",
-    description: "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between.",
-    genre: ["RPG", "Soulsborne"],
-    rating: 4.9,
-    releaseDate: "2022-02",
-    platform: ["PC", "PS5", "Xbox"],
-    status: "Live",
-    price: 59.99,
-    size: "60 GB",
-  },
-  {
-    id: "g_06",
-    title: "GTA VI",
-    slug: "gta-vi",
-    thumbnail: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=600",
-    description: "Heading to the neon-soaked streets of Vice City and beyond in the most immersive and grand evolution of the series yet.",
-    genre: ["Action", "Open World"],
-    rating: 5.0,
-    releaseDate: "2025-11",
-    platform: ["PS5", "Xbox"],
-    status: "Beta",
-    price: 69.99,
-    size: "150 GB",
-  },
-];
+interface LatestGamesProps {
+  initialGames: GameData[];
+}
 
-export default function LatestGames() {
+export default function LatestGames({ initialGames }: LatestGamesProps) {
+  
+  // Safe array guarding and capping the output array to exactly 6 records
+  const gamesToShow = initialGames ? initialGames.slice(0, 6) : [];
+
   return (
     <section className="w-full bg-[#05060c] py-16 sm:py-24 relative">
       {/* Subtle Tech Grid Overlay */}
@@ -115,11 +36,13 @@ export default function LatestGames() {
           </div>
         </div>
 
-        {/* Reusable Grid Array */}
+        {/* Reusable Grid Array - Renders a maximum of 6 elements */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
-          {demoGames.map((game) => (
-            <GameCard key={game.id} game={game} />
-          ))}
+          {gamesToShow.map((game) => {
+            // Resolves unique key mapping handles string IDs or nested Mongo DB $oids
+            const gameKey = game.id || (typeof game._id === "string" ? game._id : game._id?.$oid) || Math.random().toString();
+            return <GameCard key={gameKey} game={game} />;
+          })}
         </div>
       </div>
     </section>
