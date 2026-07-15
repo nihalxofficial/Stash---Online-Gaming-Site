@@ -48,7 +48,7 @@ export default function DownloadButtonContainer({ gameId, price, gameTitle, vari
         type="button"
       >
         <FiDownload className="w-3 h-3 stroke-[3]" />
-        <span>Get Now: Free Fetch</span>
+        <span>Get Now</span>
       </button>
     );
   }
