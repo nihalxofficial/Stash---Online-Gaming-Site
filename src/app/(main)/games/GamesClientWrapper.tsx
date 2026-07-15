@@ -2,8 +2,9 @@
 "use client";
 
 import GameCard from "@/components/Shared/GameCard";
+import GameCardSkeleton from "@/components/Shared/GameCardSkeleton";
 import { GameData } from "@/types";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { FiSearch, FiSliders, FiGrid } from "react-icons/fi";
 
 interface GamesClientWrapperProps {
@@ -15,6 +16,14 @@ export default function GamesClientWrapper({ initialGames }: GamesClientWrapperP
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [sortBy, setSortBy] = useState("default");
+  
+  // Pipeline loading buffer state for client side UI changes
+  const [isPending, setIsPending] = useState(true);
+
+  // Turn off initial mount loading frame once components resolve in client layout
+  useEffect(() => {
+    setIsPending(false);
+  }, []);
 
   // Dynamically extract all unique genres from live data records
   const allGenres = useMemo(() => {
@@ -107,7 +116,15 @@ export default function GamesClientWrapper({ initialGames }: GamesClientWrapperP
       </div>
 
       {/* 4-COLUMN RESPONSIVE RENDER GRID */}
-      {filteredAndSortedGames.length > 0 ? (
+      {isPending ? (
+        /* SKELETON MATRIX ACTIVE ON HYDRATION STAGE */
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, idx) => (
+            <GameCardSkeleton key={`skeleton-${idx}`} />
+          ))}
+        </div>
+      ) : filteredAndSortedGames.length > 0 ? (
+        /* LIVE RECOGNIZED GAME CARD GRID DATA DISPLAY */
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredAndSortedGames.map((game) => (
             <div key={game.id || game.slug} className="h-full animate-[fadeIn_0.2s_ease-out]">
