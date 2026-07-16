@@ -15,6 +15,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - Atlas
 - Framer Motion
 - React fast Marquee
+- Recharts
 
 
 First, run the development server:
