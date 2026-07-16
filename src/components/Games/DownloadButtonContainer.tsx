@@ -11,7 +11,7 @@ import {
 import { Button, Modal } from "@heroui/react";
 import { getToken, getUserSession } from "@/lib/core/session";
 import { toast } from "react-toastify";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface DownloadButtonContainerProps {
   gameId: string;
@@ -26,6 +26,7 @@ export default function DownloadButtonContainer({
   gameTitle,
   variant = "details",
 }: DownloadButtonContainerProps) {
+  const router = useRouter();
   const [step, setStep] = useState<"checkout" | "success">("checkout");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -35,8 +36,8 @@ export default function DownloadButtonContainer({
   const triggerDownloadAction = async() => {
     const user = await getUserSession();
     if(!user){
-      toast.info("Need to login before Download");
-      redirect("/auth/login");
+      toast.info("Need to login before Download!");
+      router.push("/auth/login");
     }
     const token = await getToken();
     window.open(`${process.env.NEXT_PUBLIC_API_URL}/games/${gameId}/download?token=${token}`, '_blank');

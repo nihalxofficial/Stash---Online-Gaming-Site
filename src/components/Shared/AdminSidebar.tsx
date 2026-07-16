@@ -50,7 +50,7 @@ const adminNavigationNodes: SidebarLinkNode[] = [
   // },
   {
     label: "Profile",
-    href: "/dashboard/profile",
+    href: "/profile",
     icon: FiUser,
     accentClass: "group-hover:text-blue-400",
   },

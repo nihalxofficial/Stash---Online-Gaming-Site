@@ -7,7 +7,10 @@ import {
   FaTwitter, 
   FaInstagram, 
   FaLinkedinIn, 
-  FaArrowUp 
+  FaArrowUp,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaMapMarkerAlt
 } from "react-icons/fa";
 
 const defaultGallery = [
@@ -93,8 +96,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-16">
           
           {/* Column A: Identical Brand Logo Profile & Socials */}
-          <div className="lg:col-span-4 space-y-6">
-            
+          <div className="lg:col-span-3 space-y-6">
             {/* EXACT SYNC WITH NAVBAR LOGO BRANDING PATTERN */}
             <div className="flex items-center group cursor-pointer w-fit">
               <div 
@@ -135,7 +137,33 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column B: Useful Links */}
+          {/* Column B: Contact Information */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="space-y-1">
+              <h4 className="text-xs font-black font-mono tracking-widest uppercase text-white">Contact Info</h4>
+              <div className="w-10 h-[2px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+            </div>
+            <ul className="space-y-4 text-xs font-mono tracking-wider text-gray-400">
+              <li className="flex items-start gap-3 group">
+                <span className="text-indigo-400 mt-0.5 group-hover:text-white transition-colors duration-200"><FaMapMarkerAlt /></span>
+                <span>Chittagong, Bangladesh</span>
+              </li>
+              <li className="flex items-center gap-3 group">
+                <span className="text-indigo-400 group-hover:text-white transition-colors duration-200"><FaPhoneAlt /></span>
+                <Link href="tel:+8801234567890" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                  +880 1234-567890
+                </Link>
+              </li>
+              <li className="flex items-center gap-3 group">
+                <span className="text-indigo-400 group-hover:text-white transition-colors duration-200"><FaEnvelope /></span>
+                <Link href="mailto:support@stash.com" className="text-gray-400 hover:text-indigo-400 transition-colors">
+                  support@stash.com
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column C: Useful Links */}
           <div className="lg:col-span-2 space-y-4">
             <div className="space-y-1">
               <h4 className="text-xs font-black font-mono tracking-widest uppercase text-white">Useful Link</h4>
@@ -152,7 +180,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column C: Supports */}
+          {/* Column D: Supports */}
           <div className="lg:col-span-2 space-y-4">
             <div className="space-y-1">
               <h4 className="text-xs font-black font-mono tracking-widest uppercase text-white">Supports</h4>
@@ -169,13 +197,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column D: Visual Gallery Dock */}
-          <div className="lg:col-span-4 space-y-4">
+          {/* Column E: Visual Gallery Dock */}
+          <div className="lg:col-span-2 space-y-4">
             <div className="space-y-1">
               <h4 className="text-xs font-black font-mono tracking-widest uppercase text-white">Our Gallery</h4>
               <div className="w-10 h-[2px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
             </div>
-            <div className="grid grid-cols-3 gap-2 max-w-[240px]">
+            <div className="grid grid-cols-3 gap-2 max-w-[180px] lg:max-w-none">
               {defaultGallery.map((img) => (
                 <div 
                   key={img.id} 
