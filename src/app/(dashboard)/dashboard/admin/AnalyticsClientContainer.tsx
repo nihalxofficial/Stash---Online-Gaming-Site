@@ -101,7 +101,7 @@ export default function AnalyticsClientContainer({
           <div className="my-4">
             <h2 className="text-2xl font-black text-white">{initialTournaments.length}</h2>
             <div className="flex items-center gap-1.5 text-[11px] mt-1">
-              <span className="font-bold text-cyan-400">4 Ongoing</span>
+              <span className="font-bold text-cyan-400">3 action</span>
               <span className="text-gray-500">double-elimination nodes</span>
             </div>
           </div>
