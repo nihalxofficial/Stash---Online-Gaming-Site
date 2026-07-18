@@ -2,6 +2,8 @@
 
 import { useCallback } from "react";
 import Link from "next/link";
+// 1. Imported the Next.js Image Component
+import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { HeroCardItem } from "@/types";
@@ -84,7 +86,6 @@ export default function HeroBanner({
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // FIXED: Cast static import objects through 'any' to cleanly pull out the .src value 
   const rawBgSrc = backgroundImageUrl as any;
   const resolvedBgSrc = rawBgSrc && typeof rawBgSrc === "object"
     ? rawBgSrc.src
@@ -102,11 +103,9 @@ export default function HeroBanner({
           style={{ backgroundImage: `url(${resolvedBgSrc})` }}
         />
       )}
-      {/* Subdued soft radial drop-shadows instead of heavy linear blocks */}
       <div className="absolute inset-0 bg-black/20 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-[#05060c]/80 pointer-events-none" />
 
-      {/* Tighter, Lower Slanted Bottom Accent Frame */}
       <div 
         className="absolute bottom-0 left-0 w-full h-[32%] bg-[#080a14]/90 border-t border-white/5 z-10 pointer-events-none hidden md:block"
         style={{ clipPath: "polygon(0 15%, 12% 0, 88% 0, 100% 15%, 100% 100%, 0% 100%)" }}
@@ -120,7 +119,6 @@ export default function HeroBanner({
           {tagline}
         </span>
 
-        {/* Scaled down text sizing to show more background space */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-mono tracking-tight text-white uppercase leading-none select-none max-w-4xl">
           <span className="block mb-2">{titleTop}</span>
           <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 filter drop-shadow-[0_0_12px_rgba(99,102,241,0.3)]">
@@ -128,7 +126,6 @@ export default function HeroBanner({
           </span>
         </h1>
 
-        {/* More compact action button */}
         <div className="mt-6">
           <Link
             href={ctaHref}
@@ -148,7 +145,6 @@ export default function HeroBanner({
         
         <div className="relative w-full px-4 md:px-8">
           
-          {/* Compact Left Arrow */}
           <button 
             onClick={scrollPrev}
             aria-label="Previous Slide"
@@ -159,7 +155,6 @@ export default function HeroBanner({
             </svg>
           </button>
 
-          {/* Compact Right Arrow */}
           <button 
             onClick={scrollNext}
             aria-label="Next Slide"
@@ -170,7 +165,6 @@ export default function HeroBanner({
             </svg>
           </button>
 
-          {/* Embla Slider Frame Container */}
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex touch-pan-y -ml-6">
               {cards.map((card) => (
@@ -187,17 +181,19 @@ export default function HeroBanner({
                       clipPath: "polygon(5% 0, 95% 0, 100% 8%, 100% 92%, 95% 100%, 5% 100%, 0 92%, 0 8%)"
                     }}
                   >
-                    {/* Lowered heights for a shorter HUD dock */}
                     <div 
                       className="relative h-44 md:h-48 overflow-hidden bg-slate-950"
                       style={{ 
                         clipPath: "polygon(5% 0, 95% 0, 100% 8%, 100% 92%, 95% 100%, 5% 100%, 0 92%, 0 8%)" 
                       }}
                     >
-                      <img 
+                      {/* 2. UPDATED: Swapped <img> for Next.js <Image> component */}
+                      <Image 
                         src={card.imageUrl} 
                         alt={card.title}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 ease-out brightness-[0.9]"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transform group-hover:scale-105 transition-all duration-700 ease-out brightness-[0.9]"
                       />
                       
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none z-10" />
