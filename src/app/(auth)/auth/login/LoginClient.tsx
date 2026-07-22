@@ -64,8 +64,10 @@ export default function LoginClient() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Redirecting to Google Auth Protocol...");
+  const handleGoogleLogin = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+    });
   };
 
   const cyberPolygon =

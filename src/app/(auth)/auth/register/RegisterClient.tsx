@@ -106,8 +106,10 @@ export default function RegisterClient() {
     }
   };
 
-  const handleGoogleRegister = () => {
-    console.log("Redirecting to Google Auth Protocol...");
+  const handleGoogleRegister = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+    });
   };
 
   const cyberPolygon =
